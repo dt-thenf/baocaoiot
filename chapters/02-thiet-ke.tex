@@ -55,6 +55,35 @@ Về mặt cơ khí, mô-đun GY-85 phải được cố định chắc chắn v
 
 Cảm biến áp suất BMP580 cần được bố trí khe thông khí hợp lý trên vỏ hộp; việc đóng kín hoàn toàn hoặc làm che khuất lỗ thông hơi sẽ gây trễ pha đáp ứng áp suất. Ngoài ra, cảm biến nhiệt độ tích hợp bên trong BMP580 chịu ảnh hưởng trực tiếp từ nhiệt lượng tỏa ra của bo mạch điện tử. Vì vậy, hệ thống chỉ sử dụng thông số này để bù nhiệt cho phép đo áp suất nội bộ, không dùng để kết luận nhiệt độ môi trường không khí bên ngoài nếu chưa có cơ chế cách ly nhiệt.
 
+
+\subsection{Sơ đồ nguyên lý và mô hình PCB thử nghiệm}\label{subsec:pcb-minhchung}
+Sơ đồ nguyên lý ở Hình~\ref{fig:pcb-schematic} là tài liệu thiết kế bo mạch thử nghiệm kết hợp vi điều khiển ESP32-C5 với mô-đun GY-85. Bản vẽ thể hiện các khối đầu vào USB Type-C, quản lý nguồn dùng IP5306, ổn áp AMS1117-3.3V, giao tiếp cảm biến GY-85 qua I\textsuperscript{2}C, đầu đọc thẻ nhớ, các nút nhấn và đèn báo trạng thái. Các đường tín hiệu \texttt{SDA}, \texttt{SCL}, \texttt{IMU\_INT} được dẫn về vi điều khiển; nguồn logic được ký hiệu \texttt{3V3}. Mã mô-đun tại vị trí U4 của bản vẽ là \texttt{ESP32-C5-WROOM-1-N16R8-V1.2}.
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{assets/schematic-gy85-esp32c5.pdf}{\includegraphics[width=\linewidth,height=.66\textheight,keepaspectratio]{assets/schematic-gy85-esp32c5.pdf}}{\fbox{\parbox{.82\linewidth}{Tư liệu PDF sơ đồ nguyên lý được cung cấp trong gói ảnh của báo cáo.}}}
+  \caption{Sơ đồ nguyên lý bo mạch thử nghiệm sử dụng ESP32-C5 và GY-85}
+  \label{fig:pcb-schematic}
+\end{figure}
+
+Hình~\ref{fig:pcb-3d-tren} và Hình~\ref{fig:pcb-3d-duoi} thể hiện mô hình ba chiều của hai mặt bo mạch. Các hình ảnh cho phép quan sát vị trí lắp mô-đun ESP32-C5, cụm nút nhấn, đầu nối, ổn áp, linh kiện nguồn và khe thẻ nhớ trước bước chế tạo. Đây là hình mô phỏng bố trí linh kiện PCB, không phải kết quả đo điện áp, kiểm tra đường mạch hay ảnh chụp thiết bị đã lắp ráp thực tế.
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{assets/pcb-3d-mat-tren.png}{\includegraphics[width=.82\linewidth,height=.43\textheight,keepaspectratio]{assets/pcb-3d-mat-tren.png}}{\fbox{\parbox{.82\linewidth}{Ảnh mô hình 3D mặt bo mạch có mô-đun ESP32-C5 và các nút nhấn.}}}
+  \caption{Mô hình 3D một mặt bo mạch thử nghiệm với mô-đun ESP32-C5 và cụm nút nhấn}
+  \label{fig:pcb-3d-tren}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{assets/pcb-3d-mat-duoi.png}{\includegraphics[width=.82\linewidth,height=.43\textheight,keepaspectratio]{assets/pcb-3d-mat-duoi.png}}{\fbox{\parbox{.82\linewidth}{Ảnh mô hình 3D mặt bo mạch có khối nguồn và khe thẻ nhớ.}}}
+  \caption{Mô hình 3D mặt còn lại của bo mạch, thể hiện khối nguồn và khe thẻ nhớ}
+  \label{fig:pcb-3d-duoi}
+\end{figure}
+
+Sơ đồ này phản ánh riêng bo mạch thử nghiệm ESP32-C5--GY-85; các phần tử RF 433 MHz, mô-đun SIM 4G, Raspberry Pi 3B và cảm biến BMP580 trong kiến trúc tổng thể được mô tả ở các phần riêng. Do đó, hình nguyên lý không được xem là bằng chứng tất cả các khối của hệ thống hoàn chỉnh đã được tích hợp lên cùng một PCB.
+
 \section{Thiết kế trạm chuyển tiếp Gateway Raspberry Pi 3B kết hợp mô-đun SIM 4G}\label{sec:gateway}
 \subsection{Cấu hình phần cứng và phân bổ tác vụ xử lý}
 Trạm chuyển tiếp Gateway sử dụng máy tính nhúng Raspberry Pi 3 Model B trang bị vi xử lý bốn nhân BCM2837 tốc độ 1,2 GHz, bộ nhớ RAM 1 GB cùng các giao tiếp USB 2.0, Ethernet và GPIO~\cite{pi}. Trong kiến trúc hệ thống, Raspberry Pi 3B đảm nhận vai trò thu nhận gói tin từ khối vô tuyến RF, vận hành dịch vụ chuyển tiếp và quản lý hàng đợi dữ liệu. Mô-đun SIM 4G kết nối với Raspberry Pi 3B giúp thiết lập giao diện mạng IP di động, trong đó thẻ SIM và cấu hình điểm truy cập (APN) được thiết lập tương thích với nhà mạng viễn thông.
