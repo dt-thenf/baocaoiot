@@ -1,0 +1,13 @@
+\begin{tikzpicture}[node distance=8mm]
+\node[block,text width=11cm] (r) {\textbf{Nhận gói RF}\\Đọc dữ liệu từ bộ thu; giữ định danh, phiên khởi động và số thứ tự};
+\node[block,text width=11cm,below=of r] (v) {\textbf{Kiểm tra và chuẩn hóa}\\Kiểm tra độ dài, phiên bản, CRC; loại trùng; gắn thời điểm nhận};
+\node[block,text width=11cm,below=of v] (q) {\textbf{Ghi hàng đợi bền vững trên Pi 3B}\\Lưu giao dịch trước khi gửi; tách mức ưu tiên sự kiện và bản tin định kỳ};
+\node[decision,text width=5.6cm,below=of q] (c) {Có kết nối 4G/IP và phiên MQTT hợp lệ?};
+\node[block,text width=7.3cm,below=9mm of c] (p) {\textbf{Xuất bản tới broker}\\Nhận xác nhận: đánh dấu đã chuyển giao\\Lỗi / quá hạn chờ: giữ gói để gửi lại};
+\node[block,text width=3.1cm,left=13mm of c] (n) {Giữ trong hàng đợi\\Thử kết nối lại\\Có giới hạn tài nguyên};
+\draw[arr] (r)--(v);\draw[arr] (v)--(q);\draw[arr] (q)--(c);
+\draw[arr] (c)--node[right,smallnote]{Có}(p);
+\draw[arr] (c)--node[above,smallnote]{Chưa}(n);
+\draw[arr] (n.west)--++(-.4,0)|-(q.west);
+\node[smallnote,text width=12.3cm,below=9mm of p] {PUBACK xác nhận chặng gateway -- broker.\\Trạng thái hiển thị tại ứng dụng cần được kiểm tra riêng.};
+\end{tikzpicture}

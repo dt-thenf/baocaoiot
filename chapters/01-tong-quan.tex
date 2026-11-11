@@ -1,0 +1,81 @@
+\chapter{TỔNG QUAN VÀ CÁC GIẢI PHÁP THỰC HIỆN}\label{ch:tongquan}
+
+\section{Đặt vấn đề và bối cảnh nghiên cứu}
+Khi tác nghiệp bên trong các công trình khép kín, người lính cứu hỏa thường gặp nhiều khó khăn trong việc xác định phương hướng di chuyển, duy trì thông tin liên lạc và báo cáo tình trạng an toàn của bản thân. Ở phía bên ngoài, người chỉ huy rất cần một luồng dữ liệu giám sát có mã định danh rõ ràng, dấu thời gian cập nhật và cờ báo chất lượng để phân biệt thông tin còn hiệu lực với dữ liệu đã quá hạn. Bên cạnh đó, một tọa độ vị trí hiển thị trên bản đồ chỉ thực sự có giá trị chiến thuật khi đi kèm phương pháp ước lượng rõ ràng và giới hạn sai số cụ thể.
+
+Trong khuôn khổ đề tài, bài toán nghiên cứu được tập trung vào việc thiết kế và xây dựng hệ thống nguyên mẫu gồm ba chức năng cốt lõi. Thứ nhất là nhận dạng tự động các trạng thái vận động đặc thù của người lính. Thứ hai là ước lượng bước chân, góc phương vị và tọa độ vị trí tương đối trong nhà. Thứ ba là truyền dẫn và đồng bộ dữ liệu theo thời gian thực về trung tâm chỉ huy. Ngoài ra, các cảm biến khí độc và áp suất khí quyển được tích hợp thêm nhằm bổ sung ngữ cảnh môi trường xung quanh. Tuy nhiên, các thông số môi trường này đóng vai trò cảnh báo sớm dựa trên ngưỡng thực nghiệm, chưa thay thế cho phép đo định lượng toàn diện mọi nguy cơ trong đám cháy thực tế.
+
+Về nguyên lý tổ chức, hệ thống lựa chọn giải pháp xử lý tín hiệu chuyển động và suy luận trực tiếp tại biên trên vi điều khiển ESP32. Cách tiếp cận này giúp tách biệt chu kỳ lấy mẫu cảm biến tần số cao với chu kỳ phát gói tin, qua đó giảm thiểu đáng kể dung lượng dữ liệu cần truyền dẫn. Ở chặng tiếp theo, trạm chuyển tiếp Gateway sử dụng máy tính nhúng Raspberry Pi 3 Model B kết hợp mô-đun SIM 4G được bố trí tại vị trí thuận lợi để thu sóng vô tuyến RF và kết nối mạng di động. Cấu trúc phân tầng này giúp tách biệt rõ ràng bốn khâu chức năng trong hệ thống IoT gồm thu thập cảm biến, xử lý tại biên, truyền thông chuyển tiếp và hiển thị giám sát.
+
+\section{Mục tiêu, đối tượng và phạm vi nghiên cứu}\label{sec:scope}
+\subsection{Mục tiêu nghiên cứu}
+Mục tiêu tổng quát của đề tài là thiết lập một luồng xử lý dữ liệu thống nhất và đồng bộ xuyên suốt từ lớp phần cứng cảm biến đến giao diện giám sát trung tâm. Để hiện thực hóa mục tiêu này, nghiên cứu triển khai sáu nhiệm vụ cụ thể sau:
+\begin{enumerate}
+\item Thiết kế phần cứng cụm thiết bị đeo tích hợp cảm biến quán tính GY-85, khí áp kế BMP580 và vi điều khiển ESP32, đồng thời xác lập nguyên tắc cấp nguồn, giao tiếp ngoại vi và bố trí cơ khí.
+\item Xây dựng quy trình lấy mẫu tín hiệu gắn dấu thời gian, lọc nhiễu tiền xử lý và trích xuất đặc trưng đầu vào cho mô hình nhận dạng hoạt động tại biên.
+\item Chuẩn hóa thuật toán định vị quán tính PDR thống nhất về hệ trục tọa độ, phát hiện pha bước chân, ước lượng chiều dài bước và tính toán góc hướng di chuyển.
+\item Thiết kế chuỗi liên kết truyền thông từ thiết bị đeo tại thắt lưng qua nút tập trung trên mũ bảo hộ tới trạm Gateway sử dụng Raspberry Pi 3 Model B kết hợp mô-đun SIM 4G để đồng bộ dữ liệu lên máy chủ MQTT Broker.
+\item Phát triển phần mềm giám sát trên nền tảng website và ứng dụng di động Android nhằm hiển thị trực quan trạng thái thiết bị, tư thế vận động, quỹ đạo vị trí tương đối và các thông báo cảnh báo.
+\item Xây dựng bộ tiêu chí kiểm thử định lượng, phân tích nguyên nhân vật lý gây trôi góc phương vị và đề xuất giải pháp tối ưu hóa phần cứng, thuật toán cũng như độ tin cậy truyền thông đầu cuối.
+\end{enumerate}
+
+\subsection{Quy mô và giới hạn phạm vi nghiên cứu}
+Về quy mô phần cứng, một cấu hình đơn vị nguyên mẫu bao gồm một cụm thiết bị đeo tại thắt lưng, một nút quan trắc trên mũ bảo hộ và một trạm chuyển tiếp Gateway dùng chung. Khả năng quản lý mở rộng cho nhiều chiến sĩ cùng lúc được thiết kế thông qua mã định danh thiết bị duy nhất và cấu trúc phân nhánh chủ đề trên giao thức MQTT. Tuy nhiên, năng lực chịu tải thực tế của mạng đa nút cần được đánh giá thêm qua các kịch bản thử tải chuyên biệt, không quy đổi trực tiếp từ số lượng thành viên tham gia thực hiện đề tài.
+
+Về bài toán định vị, vị trí của người lính được xác định dưới dạng tọa độ tương đối so với điểm xuất phát và góc hướng chuẩn được khởi tạo ban đầu. Nghiên cứu hiện tại chưa bao gồm việc xác nhận tọa độ địa lý tuyệt đối, chưa duy trì tính toán quãng đường liên tục khi người lính chuyển sang tư thế bò hoặc trườn, và không kết luận vị trí tầng nếu chỉ dựa đơn độc vào giá trị áp suất. Toàn bộ phạm vi thực nghiệm hướng tới môi trường diễn tập mô phỏng tại tòa nhà học tập. Hệ thống nguyên mẫu chưa trải qua các phép thử nghiệm độ bền nhiệt cực đoan, khả năng kháng nước hay va đập cơ học để thay thế ngay cho trang bị bảo hộ chuyên ngành.
+
+Về nền tảng thiết bị, phân hệ định vị khai thác dữ liệu gia tốc, vận tốc góc và từ trường từ mô-đun GY-85 để thực thi thuật toán hợp nhất trực tiếp trên vi điều khiển ESP32. Ở tầng chuyển tiếp, trạm Gateway sử dụng máy tính nhúng Raspberry Pi 3 Model B kết hợp với mô-đun SIM 4G nhằm duy trì kết nối dữ liệu độc lập về máy chủ trung tâm.
+
+\section{Phương pháp nghiên cứu và đánh giá thực nghiệm}
+Phương pháp tiếp cận của đề tài kết hợp chặt chẽ giữa nghiên cứu lý thuyết, thiết kế phân rã theo khối chức năng và kiểm chứng thực nghiệm định lượng. Các tài liệu kỹ thuật từ nhà sản xuất được sử dụng làm cơ sở để xác định dải đo, chuẩn giao tiếp và giới hạn vận hành của từng linh kiện. Trên cơ sở đó, các phân hệ cảm biến, vi điều khiển, truyền thông và giao diện người dùng được tích hợp theo một luồng dữ liệu chuẩn hóa.
+
+Trong thiết kế phần cứng, các mô-đun được phân tách rõ ràng theo nhánh cấp nguồn, mức điện áp logic và chuẩn giao tiếp vật lý. Trong xử lý tín hiệu chuyển động, quy trình thuật toán được chia thành ba lớp tác vụ độc lập: thu thập dữ liệu gắn dấu thời gian có tính lặp lại; phân loại tư thế hoạt động theo cửa sổ trượt; và cập nhật quỹ đạo PDR từ sự kiện bước chân kết hợp góc hướng liên tục. Trong kiến trúc truyền thông, hệ thống phân định rõ vai trò của từng chặng kết nối gồm BLE cục bộ, sóng vô tuyến RF 433 MHz và đường truyền mạng IP qua mô-đun SIM 4G, thay vì gọi chung toàn bộ tuyến liên lạc là mạng MQTT.
+
+Phương pháp đánh giá hiệu năng đặt trọng tâm vào các phép đo thực nghiệm có tham chiếu đối chứng. Cụ thể, số bước chân được kiểm tra đối chiếu qua quan sát trực tiếp hoặc ghi hình video. Quãng đường dịch chuyển được đo đạc trên các tuyến hành lang có đánh dấu mốc cự ly chuẩn. Góc chuyển hướng được kiểm tra tại các điểm rẽ có góc hình học xác định trước. Độ tin cậy truyền thông được đánh giá bằng cách so khớp số thứ tự bản tin giữa đầu phát và đầu thu. Mọi nhận định về chất lượng hệ thống đều được gắn liền với bộ dữ liệu, phiên bản chương trình nhúng và điều kiện thử nghiệm cụ thể, tuyệt đối không suy diễn chủ quan từ hình ảnh giao diện hay thông số lý thuyết trong tài liệu linh kiện.
+
+\section{Yêu cầu chức năng và chỉ tiêu chất lượng hệ thống}
+\begingroup\SmallTable
+\begin{longtable}{|P{35bp}|P{130bp}|P{243bp}|}
+\caption{Tổng hợp các yêu cầu chức năng và chỉ tiêu chất lượng của hệ thống}\label{tab:requirements}\\\hline
+\textbf{Mã}&\textbf{Nội dung yêu cầu}&\textbf{Phương pháp kiểm chứng và đánh giá}\\\hline\endfirsthead
+\hline\textbf{Mã}&\textbf{Nội dung yêu cầu}&\textbf{Phương pháp kiểm chứng và đánh giá}\\\hline\endhead
+F01&Thu thập tín hiệu chuyển động&Đọc đồng bộ gia tốc, vận tốc góc và từ trường; kiểm tra dấu thời gian, tỷ lệ lỗi bus và số mẫu bị mất.\\\hline
+F02&Nhận dạng hoạt động tại biên&Đối chiếu nhãn dự đoán với nhãn thực tế; thống kê ma trận nhầm lẫn và các chỉ số đánh giá trên từng lớp hành động.\\\hline
+F03&Ước lượng vị trí tương đối&Kiểm tra độ chính xác đếm bước, chiều dài quãng đường, góc phương vị và sai số quỹ đạo trên tuyến đường chuẩn.\\\hline
+F04&Quan trắc ngữ cảnh môi trường&Thu nhận dữ liệu áp suất và cảm biến khí; phân biệt rõ giá trị ADC thô, giá trị sau hiệu chuẩn và trạng thái lỗi cảm biến.\\\hline
+F05&Chuyển tiếp dữ liệu qua Gateway&Theo dõi tính toàn vẹn của mã định danh và số thứ tự gói tin xuyên suốt từ nút thu RF qua Gateway tới MQTT Broker và giao diện.\\\hline
+F06&Xử lý gián đoạn kết nối&Mô phỏng kịch bản mất kết nối BLE, RF, mạng 4G và khởi động lại thiết bị; kiểm tra hiển thị tuổi dữ liệu và cơ chế tự đồng bộ lại.\\\hline
+Q01&Tính nhất quán toàn hệ thống&Đồng bộ cấu hình cảm biến GY-85, quy ước hệ trục tọa độ, đơn vị vật lý, cấu trúc khung truyền và phiên bản mô hình nhúng.\\\hline
+Q02&Khả năng truy vết dữ liệu&Lưu trữ nhật ký phiên đo, dấu thời gian gốc, tham số hiệu chuẩn, phiên bản firmware và mã định danh phần cứng.\\\hline
+Q03&An toàn và bảo mật thông tin&Phân quyền truy cập theo chủ đề MQTT, xác thực kết nối IP và bảo vệ thông tin cấu hình trên thiết bị nhúng.\\\hline
+\end{longtable}\endgroup
+
+\section{Cơ sở lý thuyết và định hướng lựa chọn kiến trúc}
+\subsection{Mô hình phân lớp kiến trúc hệ thống IoT}
+Dựa trên mô hình ITU-T Y.2060 (được chuẩn hóa lại thành ITU-T Y.4000) ~\cite{itu}, kiến trúc hệ thống trong đề tài được tổ chức thành bốn lớp chức năng gồm: lớp thiết bị cảm biến, lớp mạng truyền thông, lớp dịch vụ xử lý và lớp ứng dụng giám sát. Các cơ chế quản lý thiết bị và bảo mật dữ liệu được thiết kế xuyên suốt qua cả bốn lớp. Cần lưu ý rằng việc vận dụng mô hình ITU-T nhằm mục đích chuẩn hóa phân tích thiết kế.
+
+Trong cấu trúc triển khai thực tế, lớp thiết bị bao gồm cụm đeo tại thắt lưng và nút quan trắc trên mũ bảo hộ. Lớp mạng đảm nhận việc truyền tải dữ liệu qua giao thức BLE, sóng vô tuyến RF 433 MHz và mạng di động 4G. Lớp dịch vụ bao gồm trạm chuyển tiếp Gateway, máy chủ MQTT Broker và hệ quản trị cơ sở dữ liệu. Cuối cùng, lớp ứng dụng cung cấp giao diện theo dõi trực quan trên nền tảng web và thiết bị di động. Do trạm Gateway sử dụng Raspberry Pi 3 Model B kết hợp mô-đun SIM 4G vừa thực hiện tiền xử lý gói tin tại biên vừa đóng vai trò cổng kết nối mạng diện rộng, ranh giới phân lớp ở đây mang tính định hướng chức năng thay vì gán cứng một thiết bị vật lý vào một lớp duy nhất.
+
+\subsection{Cơ sở lý thuyết về nhận dạng hành động tại biên}
+Bài toán nhận dạng hoạt động con người (HAR) dựa trên cảm biến gia tốc đeo trên cơ thể thường được thực hiện qua ba bước: phân đoạn chuỗi tín hiệu theo cửa sổ trượt, trích xuất đặc trưng thống kê và phân loại bằng thuật toán học máy. Nghiên cứu của Dao và cộng sự đã chứng minh tính khả thi của việc nhúng trực tiếp mô hình Rừng ngẫu nhiên (Random Forest) lên vi điều khiển, mở ra hướng tiếp cận hiệu quả cho các thiết bị đeo bị giới hạn nghiêm ngặt về bộ nhớ và năng lượng~\cite{har}. Đề tài kế thừa phương pháp luận này để thiết kế phân hệ nhận dạng tại biên, đồng thời không lấy số liệu độ chính xác của tài liệu tham khảo làm kết quả thực nghiệm của hệ thống đang xây dựng.
+
+Cấu hình nhận dạng được thiết lập trong hệ thống sử dụng tần số lấy mẫu 50 Hz, cửa sổ thời gian cố định 3 giây, tập 13 nhóm đặc trưng miền thời gian và mô hình Rừng ngẫu nhiên gồm 17 cây quyết định với độ sâu tối đa 14 tầng. Hiệu năng phân loại thực tế của hệ thống phụ thuộc trực tiếp vào quy trình gán nhãn, độ ổn định của vị trí đeo tại thắt lưng, thể trạng người thực hiện, phương pháp phân chia tập dữ liệu và mã nguồn mô hình thực tế được biên dịch trên vi điều khiển ESP32.
+
+\subsection{Nguyên lý định vị quán tính PDR và bài toán sai số tích lũy}
+Phương pháp định vị quán tính cho người đi bộ (PDR) thực hiện ước lượng vị trí mới dựa trên tọa độ trước đó, chiều dài sải bước và góc phương vị tại thời điểm phát hiện bước chân. Ưu điểm nổi bật của kỹ thuật PDR là khả năng vận hành độc lập mà không yêu cầu lắp đặt trước hạ tầng điểm neo định vị bên trong tòa nhà. Tuy nhiên, nhược điểm cố hữu của phương pháp này là sai số ước lượng chiều dài bước và sai số góc hướng sẽ cộng dồn liên tục theo quãng đường di chuyển. Do đó, kết quả định vị trong hệ thống luôn được xác định là tọa độ ước lượng tương đối, đi kèm cờ báo mức độ tin cậy và cần được hỗ trợ hiệu chỉnh khi đi qua các điểm mốc tham chiếu.
+
+Để xác định góc hướng di chuyển, con quay hồi chuyển đo vận tốc góc quay của cơ thể. Phép tích phân trực tiếp vận tốc góc theo thời gian luôn làm tích lũy sai số điểm không (bias) và nhiễu nhiệt thành hiện tượng trôi góc phương vị. Trong hệ thống hợp nhất cảm biến, gia tốc kế cung cấp véc-tơ tham chiếu trọng lực để ước lượng góc nghiêng, trong khi từ kế bổ sung góc tham chiếu phương vị từ trường Trái Đất khi môi trường không bị nhiễu loạn~\cite{gyro}. Cần nhấn mạnh rằng GY-85 chỉ là mô-đun phần cứng thu thập tín hiệu thô trên các trục; góc phương vị (yaw) bắt buộc phải được ước lượng thông qua thuật toán lọc hợp nhất trên vi điều khiển, hoàn toàn không phải là một giá trị góc tuyệt đối có sẵn trong thanh ghi cảm biến.
+
+\section{Lựa chọn giao thức và liên kết truyền thông}
+\begingroup\SmallTable
+\captionsetup{hypcap=false}\captionof{table}{Phân tích vai trò và giới hạn kỹ thuật của các liên kết truyền thông trong hệ thống}\label{tab:links}
+\noindent\begin{tabularx}{\linewidth}{|P{65bp}|P{115bp}|Y|}\hline
+\textbf{Giao thức / Liên kết}&\textbf{Phạm vi kết nối}&\textbf{Vai trò chức năng và giới hạn kỹ thuật}\\\hline
+Giao tiếp I\textsuperscript{2}C&Cụm cảm biến GY-85, BMP580 với ESP32&Thu thập dữ liệu đo lường nội bộ trên bo mạch; cần kiểm soát mức điện áp logic, xung đột địa chỉ và lỗi treo bus.\\\hline
+Kết nối BLE&Thiết bị đeo thắt lưng với nút trên mũ&Trao đổi dữ liệu không dây cự ly ngắn trên cơ thể người lính; cần cơ chế phát hiện rớt mạng và ghép nối đúng định danh.\\\hline
+Sóng vô tuyến RF 433 MHz&Nút trên mũ bảo hộ với trạm thu Gateway&Truyền các khung bản tin ngắn từ trong công trình ra ngoài; cần kiểm soát hiện tượng trùng gói tin và suy hao do vật cản.\\\hline
+Giao tiếp USB và mạng LTE&Mô-đun SIM 4G kết nối Raspberry Pi 3B với mạng di động&Thiết lập đường truyền IP diện rộng để Gateway đồng bộ dữ liệu lên máy chủ; phụ thuộc vào nguồn cấp, cấu hình APN và vùng phủ sóng 4G.\\\hline
+Giao thức MQTT&Từ trạm Gateway tới MQTT Broker và phần mềm giám sát&Tổ chức xuất bản và nhận thông điệp theo cấu trúc chủ đề trên nền mạng IP; không thay thế cho các liên kết vật lý BLE và RF.\\\hline
+\end{tabularx}\endgroup
+
+Ở tầng ứng dụng mạng, giao thức MQTT tổ chức luồng dữ liệu theo mô hình xuất bản và đăng ký (Publish/Subscribe) thông qua máy chủ trung gian Broker. Việc thiết lập chất lượng dịch vụ ở mức QoS 1 đảm bảo bản tin được chuyển giao thành công ít nhất một lần, tuy nhiên cơ chế phát lại gói tin đòi hỏi phần mềm giám sát phải có khóa kiểm tra chống trùng lặp dữ liệu~\cite{mqtt}. Các luồng bản tin định kỳ, thông báo cảnh báo khẩn cấp và trạng thái thiết bị được phân tách thành các nhánh chủ đề riêng biệt. Toàn bộ kết nối mạng IP từ trạm chuyển tiếp Gateway lên máy chủ đám mây được duy trì thông qua máy tính nhúng Raspberry Pi 3 Model B kết hợp với mô-đun SIM 4G.

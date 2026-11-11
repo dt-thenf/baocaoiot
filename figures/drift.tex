@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+\begin{axis}[width=.94\linewidth,height=7cm,
+xlabel={Quãng đường thẳng $L$ (m)},ylabel={Sai lệch ngang $e_{\perp}$ (m)},
+xmin=0,xmax=30,ymin=0,ymax=3,xtick={0,5,...,30},ytick={0,.5,...,3},
+grid=both,major grid style={black!20},minor grid style={black!8},
+tick label style={font=\fontsize{11bp}{13bp}\selectfont},
+label style={font=\fontsize{12bp}{14bp}\selectfont},
+legend style={at={(.5,-.26)},anchor=north,legend columns=3,font=\fontsize{11bp}{13bp}\selectfont,draw=none},
+every axis plot/.append style={line width=.8pt}]
+\addplot[black,domain=0:30,samples=2]{x*sin(1)};\addlegendentry{$\delta\psi=1^\circ$}
+\addplot[black,dashed,domain=0:30,samples=2]{x*sin(3)};\addlegendentry{$\delta\psi=3^\circ$}
+\addplot[black,dashdotted,domain=0:30,samples=2]{x*sin(5)};\addlegendentry{$\delta\psi=5^\circ$}
+\end{axis}
+\end{tikzpicture}

@@ -1,0 +1,39 @@
+BÁO CÁO HỆ THỐNG IoT GIÁM SÁT AN TOÀN VÀ ĐỊNH VỊ TRONG NHÀ
+
+TỆP CHÍNH
+main.tex: tệp chính để biên dịch toàn bộ báo cáo.
+config/thong-tin.tex: thông tin bìa và phiếu đánh giá.
+chapters/: lời mở đầu, bốn chương và tài liệu tham khảo.
+forms/: bìa, bảng nhóm, cam đoan, phiếu đánh giá và từ viết tắt.
+assets/: ảnh và nền form được dùng trong báo cáo.
+figures/: sơ đồ TikZ và đồ thị pgfplots có thể chỉnh sửa.
+iot-report.sty, report-additions.sty: thiết lập hình thức và thành phần bổ sung.
+BUILD.cmd: lệnh biên dịch trên Windows.
+fonts/README.txt: hướng dẫn sử dụng Times New Roman.
+SHA256SUMS.txt: mã kiểm tra các tệp trong gói.
+
+BIÊN DỊCH
+Giải nén toàn bộ gói, giữ nguyên cấu trúc thư mục. Mở main.tex và chọn
+XeLaTeX. Yêu cầu TeX Live hoặc MiKTeX có đầy đủ các gói của dự án và font
+Times New Roman. Không dùng pdfLaTeX.
+
+Trên Windows có thể chạy BUILD.cmd, hoặc chạy ba lần:
+  xelatex -interaction=nonstopmode -halt-on-error main.tex
+
+Ba lượt cập nhật trích dẫn, mục lục và danh mục hình/bảng. Tệp main.pdf
+được tạo trong cùng thư mục. Không cần BibTeX; tài liệu tham khảo nằm trong
+chapters/05-tai-lieu.tex.
+
+Nếu dùng Overleaf, chọn Compiler = XeLaTeX. Khi môi trường chưa có Times
+New Roman, thêm bốn tệp font mà bạn có quyền sử dụng theo fonts/README.txt.
+Font không được phân phối kèm gói này.
+
+HÌNH THỨC
+Thân bài A4, Times New Roman 14, giãn dòng 1,5; lề trái/trên/dưới 30 mm,
+phải 20 mm; chú thích hình và bảng 12. Bìa và phiếu đánh giá dùng khung gốc
+với chữ LaTeX chỉnh được.
+
+PHIÊN BẢN NỘI DUNG
+Báo cáo trình bày chung về hệ thống; Chương 4 tập trung vào phần cứng,
+nhận dạng hành động, định vị PDR và gateway Pi 3B kết hợp modem 4G.
+Phần nhược điểm và cải thiện đã được rút gọn. Báo cáo không có phụ lục.

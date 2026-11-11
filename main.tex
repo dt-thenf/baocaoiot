@@ -1,0 +1,24 @@
+% !TeX program = xelatex
+\documentclass[14pt,a4paper,oneside,openany]{extreport}
+\def\ReportProfile{chapter8}
+\usepackage{iot-report}
+\usepackage{report-additions}
+\input{config/thong-tin}
+\begin{document}
+\TrangBia
+\input{forms/ket-qua-nhom}
+\input{forms/loi-cam-doan}
+\FixedForm{phieu-a4}{595.2}{841.92}
+\pagenumbering{roman}\setcounter{page}{5}
+\tableofcontents\clearpage
+\listoffigures\clearpage
+\listoftables\clearpage
+\input{forms/tu-viet-tat}
+\clearpage\pagenumbering{arabic}
+\input{chapters/00-mo-dau}
+\input{chapters/01-tong-quan}
+\input{chapters/02-thiet-ke}
+\input{chapters/03-kiem-thu}
+\input{chapters/04-ket-qua}
+\input{chapters/05-tai-lieu}
+\end{document}

@@ -1,0 +1,16 @@
+\begin{tikzpicture}[node distance=7mm]
+\node[smallnote,font=\bfseries] at (0,1) {CHUẨN BỊ MÔ HÌNH};
+\node[smallnote,font=\bfseries] at (7.8,1) {SUY LUẬN TRÊN ESP32};
+\node[block,text width=5.8cm,minimum height=13mm] (a) at (0,0) {Thu thập và gán nhãn\\Giữ mã người và phiên đo};
+\node[block,text width=5.8cm,minimum height=13mm,below=of a] (b) {Chia tập theo người / phiên\\Tách tập kiểm tra độc lập};
+\node[block,text width=5.8cm,minimum height=13mm,below=of b] (c) {Tiền xử lý, trích đặc trưng\\Thống nhất đơn vị và thứ tự};
+\node[block,text width=5.8cm,minimum height=13mm,below=of c] (d) {Huấn luyện Random Forest\\Kiểm tra tài nguyên và nhầm lẫn};
+\node[block,text width=5.8cm,minimum height=13mm,below=of d] (e) {Xuất mô hình và bảng nhãn\\Lưu phiên bản cấu hình};
+\node[block,text width=5.8cm,minimum height=13mm] (f) at (7.8,0) {Đọc GY-85 theo chu kỳ 20 ms\\Ghi dấu thời gian và mẫu lỗi};
+\node[block,text width=5.8cm,minimum height=13mm,below=of f] (g) {Hiệu chỉnh và tiền xử lý\\Cùng quy trình khi huấn luyện};
+\node[block,text width=5.8cm,minimum height=13mm,below=of g] (h) {Tạo cửa sổ 150 mẫu\\Tính véc-tơ 13 đặc trưng};
+\node[block,text width=5.8cm,minimum height=13mm,below=of h] (i) {Suy luận hành động\\Kiểm tra ngã và độ tin cậy};
+\node[block,text width=5.8cm,minimum height=13mm,below=of i] (j) {Ghép vào gói trạng thái\\BLE -- mũ -- RF -- gateway};
+\foreach \u/\v in {a/b,b/c,c/d,d/e,f/g,g/h,h/i,i/j}{\draw[arr](\u)--(\v);}
+\draw[arr,dashed] (e.east)--++(.5,0)|-node[pos=.85,above,smallnote]{Nạp}(i.west);
+\end{tikzpicture}

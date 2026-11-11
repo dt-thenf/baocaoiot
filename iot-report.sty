@@ -1,0 +1,130 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{iot-report}[2026/11/10 Source-derived IoT report]
+\RequirePackage{iftex}
+\ifXeTeX\else\PackageError{iot-report}{Hay dung XeLaTeX}{Chon compiler XeLaTeX.}\fi
+\RequirePackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\IfFileExists{fonts/times.ttf}{%
+  \setmainfont{times.ttf}[Path=fonts/,BoldFont=timesbd.ttf,ItalicFont=timesi.ttf,BoldItalicFont=timesbi.ttf]
+}{%
+  \IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{%
+    \PackageError{iot-report}{Thieu font Times New Roman}{Cai Times New Roman hoac dat 4 tep font cua ban vao fonts/. Khong tu thay font.}}
+}
+\RequirePackage{geometry}
+\RequirePackage{graphicx,xcolor,tikz,eso-pic}
+\RequirePackage{titlesec,tocloft,caption,fancyhdr,enumitem,array,tabularx,longtable,etoolbox}
+\RequirePackage[unicode,hidelinks,hypertexnames=false]{hyperref}
+\RequirePackage{fix-cm}
+\RequirePackage{amsmath,amssymb,indentfirst,float}
+\providecommand{\ReportProfile}{chapter8}
+\newif\ifMauMot \newif\ifMauHai
+\ifdefstring{\ReportProfile}{mau1}{\MauMottrue}{\MauMotfalse}
+\ifdefstring{\ReportProfile}{mau2}{\MauHaitrue}{\MauHaifalse}
+\newcommand{\BodySize}{14}
+\newcommand{\BodyBase}{24.15}
+\newcommand{\BodyIndent}{21.3bp}
+\newcommand{\BodyParSkip}{0bp}
+\ifMauMot
+  \geometry{paperwidth=595.2bp,paperheight=841.92bp,left=85.05bp,right=56.7bp,top=85.05bp,bottom=85.05bp,headsep=18bp,footskip=49.05bp}
+  \renewcommand{\BodySize}{13}\renewcommand{\BodyBase}{22.425}
+  \renewcommand{\BodyIndent}{36bp}\renewcommand{\BodyParSkip}{6bp}
+\else\ifMauHai
+  \geometry{letterpaper,left=72bp,right=72bp,top=72bp,bottom=72bp,headsep=23bp,headheight=16bp,footskip=36bp}
+\else
+  \geometry{a4paper,left=30mm,right=20mm,top=30mm,bottom=30mm,headsep=18bp,footskip=12mm}
+\fi\fi
+\newcommand{\BodyFormat}{%
+  \fontsize{\BodySize bp}{\BodyBase bp}\selectfont
+  \setlength{\parindent}{\BodyIndent}\setlength{\parskip}{\BodyParSkip}}
+\AtBeginDocument{\BodyFormat}
+\renewcommand{\contentsname}{MỤC LỤC}
+\renewcommand{\listfigurename}{DANH MỤC HÌNH ẢNH}
+\renewcommand{\listtablename}{DANH MỤC BẢNG BIỂU}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\bibname}{TÀI LIỆU THAM KHẢO}
+\renewcommand{\chaptername}{CHƯƠNG}
+\setcounter{secnumdepth}{2}\setcounter{tocdepth}{2}
+\newcommand{\ChapterNumber}{\arabic{chapter}}
+\ifMauMot\renewcommand{\ChapterNumber}{\Roman{chapter}}\fi
+\renewcommand{\thechapter}{\arabic{chapter}}
+\ifMauMot\renewcommand{\thechapter}{\Roman{chapter}}\fi
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\titleformat{\chapter}[block]{\normalfont\bfseries\centering\fontsize{\BodySize bp}{\BodyBase bp}\selectfont}{CHƯƠNG \ChapterNumber:}{.35em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{6bp}
+\titleformat{\section}{\normalfont\bfseries\fontsize{\BodySize bp}{\BodyBase bp}\selectfont}{\thesection.}{.35em}{}
+\titlespacing*{\section}{0pt}{6bp}{6bp}
+\titleformat{\subsection}{\normalfont\itshape\fontsize{\BodySize bp}{\BodyBase bp}\selectfont}{\thesubsection.}{.35em}{}
+\titlespacing*{\subsection}{0pt}{6bp}{6bp}
+\ifMauMot\titleformat{\subsection}{\normalfont\fontsize{13bp}{22.425bp}\selectfont}{\thesubsection.}{.35em}{}\fi
+\DeclareCaptionFont{sourcecaption}{\fontsize{12bp}{14.4bp}\selectfont}
+\captionsetup{font=sourcecaption,labelsep=colon,justification=centering,skip=6bp}
+\ifMauMot
+ \DeclareCaptionFont{mau1caption}{\fontsize{11bp}{12.65bp}\selectfont\itshape\color[HTML]{0E2841}}
+ \captionsetup{font=mau1caption,labelsep=period}
+\fi
+\ifMauHai
+ \DeclareCaptionFont{mau2caption}{\fontsize{12bp}{13.8bp}\selectfont}
+ \captionsetup{font=mau2caption,labelsep=colon}
+\fi
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftsecfont}{\bfseries}
+\ifMauHai\renewcommand{\cftsubsecfont}{\itshape}\fi
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftsecdotsep}{\cftdotsep}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{0pt}
+\setlength{\cftchapindent}{0bp}\setlength{\cftsecindent}{18bp}\setlength{\cftsubsecindent}{36bp}
+\renewcommand{\cftchappresnum}{CHƯƠNG }
+\renewcommand{\cftchapaftersnum}{: }
+\setlength{\cftchapnumwidth}{86bp}\setlength{\cftsecnumwidth}{28bp}\setlength{\cftsubsecnumwidth}{38bp}
+\renewcommand{\cfttoctitlefont}{\hfill\bfseries\fontsize{\BodySize bp}{\BodyBase bp}\selectfont}
+\renewcommand{\cftaftertoctitle}{\hfill\mbox{}}
+\renewcommand{\cftloftitlefont}{\hfill\bfseries\fontsize{\BodySize bp}{\BodyBase bp}\selectfont}
+\renewcommand{\cftafterloftitle}{\hfill\mbox{}}
+\renewcommand{\cftlottitlefont}{\hfill\bfseries\fontsize{\BodySize bp}{\BodyBase bp}\selectfont}
+\renewcommand{\cftafterlottitle}{\hfill\mbox{}}
+\setlength{\cftbeforetoctitleskip}{0pt}\setlength{\cftaftertoctitleskip}{6bp}
+\setlength{\cftbeforeloftitleskip}{0pt}\setlength{\cftafterloftitleskip}{6bp}
+\setlength{\cftbeforelottitleskip}{0pt}\setlength{\cftafterlottitleskip}{6bp}
+\pagestyle{fancy}\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}
+\newcommand{\SetupPageNumbers}{%
+ \fancyhf{}\ifMauHai\fancyhead[C]{\fontsize{13bp}{15bp}\selectfont\thepage}%
+ \else\fancyfoot[C]{\fontsize{13bp}{15bp}\selectfont\thepage}\fi}
+\SetupPageNumbers
+\fancypagestyle{plain}{\fancyhf{}\ifMauHai\fancyhead[C]{\fontsize{13bp}{15bp}\selectfont\thepage}\else\fancyfoot[C]{\fontsize{13bp}{15bp}\selectfont\thepage}\fi\renewcommand{\headrulewidth}{0pt}}
+\setlist{itemsep=0pt,parsep=0pt,topsep=6bp,leftmargin=36bp}
+\setlength{\emergencystretch}{1.5em}
+\hyphenpenalty=10000\exhyphenpenalty=10000
+\raggedbottom
+\ifMauHai
+ \renewcommand{\cfttoctitlefont}{\hfill\bfseries\fontsize{13bp}{22.425bp}\selectfont}
+ \renewcommand{\cftloftitlefont}{\hfill\bfseries\fontsize{13bp}{22.425bp}\selectfont}
+ \renewcommand{\cftlottitlefont}{\hfill\bfseries\fontsize{13bp}{22.425bp}\selectfont}
+\fi
+\ifMauMot\tocloftpagestyle{empty}\fi
+\ifMauMot\def\SourceListSize{13}\else\ifMauHai\def\SourceListSize{13}\else\def\SourceListSize{14}\fi\fi
+\AtBeginDocument{%
+ \let\IOTtoc\tableofcontents\let\IOTlof\listoffigures\let\IOTlot\listoftables
+ \renewcommand{\tableofcontents}{{\fontsize{\SourceListSize bp}{22.425bp}\selectfont\IOTtoc}}
+ \renewcommand{\listoffigures}{{\fontsize{\SourceListSize bp}{22.425bp}\selectfont\IOTlof}}
+ \renewcommand{\listoftables}{{\fontsize{\SourceListSize bp}{22.425bp}\selectfont\IOTlot}}}
+% Các form dùng tọa độ PDF gốc, tính bằng bp (1/72 inch).
+\newcommand{\FormText}[5]{\node[anchor=base west,inner sep=0pt,outer sep=0pt,text=black] at ([xshift=#1bp,yshift=#2bp]current page.south west) {{\fontsize{#3bp}{#3bp}\selectfont#4#5}};}
+\newcommand{\FormCenter}[5]{\node[anchor=base,align=center,inner sep=0pt,outer sep=0pt,text=black] at ([xshift=#1bp,yshift=#2bp]current page.south west) {{\fontsize{#3bp}{#3bp}\selectfont#4#5}};}
+\newcommand{\FixedForm}[3]{%
+ \clearpage\begingroup
+ \paperwidth=#2bp\paperheight=#3bp
+ \pdfpagewidth=\paperwidth\pdfpageheight=\paperheight
+ \thispagestyle{empty}
+ \AddToShipoutPictureBG*{\AtPageLowerLeft{\includegraphics[width=#2bp,height=#3bp]{assets/#1-nen.pdf}}}
+ \AddToShipoutPictureFG*{\begin{tikzpicture}[remember picture,overlay]\input{forms/#1.tex}\end{tikzpicture}}
+ \null\clearpage\endgroup
+ \pdfpagewidth=\paperwidth\pdfpageheight=\paperheight}
+\newcommand{\TrangBia}{\FixedForm{bia}{595.2}{841.92}}
+\newcommand{\PhieuDanhGia}{\FixedForm{phieu-danh-gia}{612}{792}}
+\newcommand{\UnnumberedChapter}[1]{\chapter*{#1}\phantomsection\addcontentsline{toc}{chapter}{#1}}
+\newcommand{\NoiDungMau}[1]{[Điền #1.]\par}
+\newcommand{\KhungHinh}[1][Sơ đồ hoặc ảnh của đề tài]{\fbox{\parbox[c][38mm][c]{.87\linewidth}{\centering\fontsize{12bp}{15bp}\selectfont #1}}}

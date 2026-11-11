@@ -1,0 +1,220 @@
+
+\begin{tikzpicture}[
+    scale=0.7,
+    transform shape,
+    node distance=7mm,
+    font=\small,
+    >=Stealth,
+    % Dinh dang chung
+    base/.style={
+        draw=cyan!70!blue,
+        fill=cyan!12,
+        thick,
+        align=center,
+        inner sep=5pt
+    },
+    % Bat dau / Ket thuc: hinh elip
+    startstop/.style={
+        base,
+        ellipse,
+        minimum width=3.3cm,
+        minimum height=0.85cm
+    },
+    % Nhap du lieu: hinh binh hanh
+    input/.style={
+        base,
+        trapezium,
+        trapezium left angle=70,
+        trapezium right angle=110,
+        text width=9.4cm,
+        minimum height=1.05cm
+    },
+    % Xu ly / tinh toan: hinh chu nhat
+    block/.style={
+        base,
+        rectangle,
+        text width=10.2cm,
+        minimum height=1.05cm
+    },
+    % Dieu kien: hinh thoi
+    decision/.style={
+        base,
+        diamond,
+        aspect=2.3,
+        text width=2.8cm,
+        inner sep=1.5pt
+    },
+    % Xuat du lieu: hinh tai lieu
+    output/.style={
+        base,
+        tape,
+        tape bend top=none,
+        text width=10.2cm,
+        minimum height=1.3cm
+    },
+    % Mui ten luong xu ly
+    arr/.style={
+        ->,
+        thick,
+        draw=cyan!75!blue
+    },
+    % Nhan cua nhanh dieu kien
+    branch/.style={
+        font=\small,
+        fill=white,
+        inner sep=2pt
+    }
+]
+
+% ==========================================
+% 1. BAT DAU
+% ==========================================
+
+\node[startstop] (start) {
+    \textbf{Bắt đầu}
+};
+
+% ==========================================
+% 2. NHAN DU LIEU
+% ==========================================
+
+\node[input, below=of start] (data) {
+    \textbf{Nhận dữ liệu GY-85 có dấu thời gian}\\
+    Gia tốc, vận tốc góc và từ trường
+};
+
+% ==========================================
+% 3. HIEU CHINH DU LIEU
+% ==========================================
+
+\node[block, below=of data] (calib) {
+    \textbf{Hiệu chỉnh và chuẩn hóa dữ liệu}\\
+    Hiệu chỉnh bias, từ trường;\\
+    đổi từ hệ trục cảm biến sang hệ trục lắp đặt
+};
+
+% ==========================================
+% 4. XU LY GIA TOC
+% ==========================================
+
+\node[block, below=of calib] (accel) {
+    \textbf{Xử lý tín hiệu gia tốc}\\
+    $a=\sqrt{a_x^2+a_y^2+a_z^2}$\\
+    Lọc thành phần phù hợp;
+    kiểm tra đỉnh và khoảng thời gian tối thiểu
+};
+
+% ==========================================
+% 5. UOC LUONG TU THE VA HUONG
+% ==========================================
+
+\node[block, below=of accel] (heading) {
+    \textbf{Ước lượng tư thế và hướng}\\
+    Hợp nhất gyro, gia tốc và từ trường hợp lệ;\\
+    đổi hướng sang hệ mặt bằng,
+    chuẩn hóa góc và trạng thái tin cậy
+};
+
+% ==========================================
+% 6. KIEM TRA BUOC DI
+% ==========================================
+
+\node[decision, below=10mm of heading] (stepcheck) {
+    \textbf{Phát hiện}\\
+    \textbf{bước hợp lệ?}
+};
+
+% ==========================================
+% 7. UOC LUONG CHIEU DAI BUOC
+% ==========================================
+
+\node[block, below=10mm of stepcheck] (stride) {
+    \textbf{Ước lượng chiều dài bước $\ell_k$}\\
+    Chỉ sử dụng chiều dài bước mới phát hiện,\\
+    không sử dụng tổng quãng đường tích lũy
+};
+
+% ==========================================
+% 8. CAP NHAT TOA DO PDR
+% ==========================================
+
+\node[block, below=of stride] (pdr) {
+    \textbf{Cập nhật vị trí tại sự kiện bước $k$}\\[2pt]
+    $x_k=x_{k-1}+\ell_k\sin\psi_k$\\[2pt]
+    $y_k=y_{k-1}+\ell_k\cos\psi_k$\\[3pt]
+    $x$: hướng Đông,\quad $y$: hướng Bắc\\
+    $\psi=0$: hướng Bắc
+};
+
+% ==========================================
+% 9. XUAT DU LIEU
+% ==========================================
+
+\node[output, below=of pdr] (send) {
+    \textbf{Đóng gói và đồng bộ tới gateway}\\
+    Tọa độ, hướng, số bước, tuổi dữ liệu
+    và trạng thái chất lượng\\
+    Vị trí PDR chỉ là giá trị ước lượng
+};
+
+% ==========================================
+% 10. KIEM TRA TIEP TUC
+% ==========================================
+
+\node[decision, below=10mm of send] (running) {
+    \textbf{Tiếp tục}\\
+    \textbf{giám sát?}
+};
+
+% ==========================================
+% 11. KET THUC
+% ==========================================
+
+\node[startstop, below=10mm of running] (end) {
+    \textbf{Kết thúc}
+};
+
+% ==========================================
+% NOI CAC LUONG XU LY CHINH
+% ==========================================
+
+\draw[arr] (start.south) -- (data.north);
+\draw[arr] (data.south) -- (calib.north);
+\draw[arr] (calib.south) -- (accel.north);
+\draw[arr] (accel.south) -- (heading.north);
+\draw[arr] (heading.south) -- (stepcheck.north);
+
+% Co buoc hop le
+\draw[arr]
+    (stepcheck.south)
+    -- node[branch, right] {Có}
+    (stride.north);
+
+% Khong phat hien buoc:
+% doc mau cam bien tiep theo
+\draw[arr]
+    (stepcheck.west)
+    -- node[branch, above] {Không}
+    ++(-4.4cm,0)
+    |- (data.west);
+
+% Cap nhat va xuat du lieu
+\draw[arr] (stride.south) -- (pdr.north);
+\draw[arr] (pdr.south) -- (send.north);
+\draw[arr] (send.south) -- (running.north);
+
+% Tiep tuc giam sat:
+% quay lai nhan du lieu moi
+\draw[arr]
+    (running.east)
+    -- node[branch, above] {Có}
+    ++(4.4cm,0)
+    |- (data.east);
+
+% Dung giam sat
+\draw[arr]
+    (running.south)
+    -- node[branch, right] {Không}
+    (end.north);
+
+\end{tikzpicture}

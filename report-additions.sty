@@ -1,0 +1,27 @@
+\ProvidesPackage{report-additions}[2026/11/10 Completed report layout]
+\RequirePackage{xurl,booktabs,needspace,multirow,subcaption,pgfplots}
+\RequirePackage[section]{placeins}
+\urlstyle{same}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,shapes.geometric,shapes.symbols}
+\pgfplotsset{compat=1.18}
+\hypersetup{pdftitle={Báo cáo hệ thống IoT giám sát an toàn và định vị trong nhà},pdfauthor={Nhóm thực hiện đề tài},pdfsubject={Thiết bị đeo GY-85, PDR và gateway Raspberry Pi 3B kết hợp 4G}}
+\newcommand{\SmallTable}{\fontsize{12bp}{15bp}\selectfont\setlength{\tabcolsep}{5bp}\renewcommand{\arraystretch}{1.25}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\SrcNote}[1]{\par\vspace{2bp}{\fontsize{11bp}{13.2bp}\selectfont #1\par}}
+\newcommand{\FigureFile}[4]{\begin{figure}[htbp]\centering\includegraphics[width=#2\linewidth]{assets/#1}\caption{#3}\label{#4}\end{figure}}
+\newcommand{\Diagram}[3]{\begin{figure}[htbp]\centering\input{figures/#1}\caption{#2}\label{#3}\end{figure}}
+\tikzset{block/.style={draw,rounded corners=2pt,fill=black!3,align=center,font=\fontsize{11bp}{13bp}\selectfont,inner sep=5pt},arr/.style={-{Latex[length=2mm]},line width=.55pt},smallnote/.style={font=\fontsize{10.5bp}{12.5bp}\selectfont,align=center},decision/.style={diamond,draw,aspect=2.8,align=center,font=\fontsize{11bp}{13bp}\selectfont,inner sep=2pt}}
+\makeatletter
+\pretocmd{\l@chapter}{\Needspace{4\baselineskip}}{}{}
+% Longtable's bottom \vss has infinite shrink. The 2025 output routine
+% splits that box while collecting marks; use stretch-only \vfil instead.
+\AtBeginDocument{%
+ \patchcmd{\LT@output}{\copy\LT@foot\vss}{\copy\LT@foot\vfil}{}{}
+ \patchcmd{\LT@output}{\copy\LT@foot\vss}{\copy\LT@foot\vfil}{}{}}
+\makeatother
+\AtBeginEnvironment{thebibliography}{\fontsize{12bp}{17bp}\selectfont\raggedright\setlength{\parskip}{5bp}}
+\setlength{\textfloatsep}{12bp plus 2bp minus 2bp}
+\setlength{\intextsep}{12bp plus 2bp minus 2bp}
+\setcounter{topnumber}{2}\setcounter{bottomnumber}{2}\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{.88}\renewcommand{\bottomfraction}{.8}\renewcommand{\textfraction}{.1}\renewcommand{\floatpagefraction}{.68}

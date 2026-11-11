@@ -1,0 +1,11 @@
+\begin{tikzpicture}[node distance=11mm]
+\node[block,text width=6.3cm,minimum height=20mm] (w) {\textbf{Thiết bị đeo}\\GY-85, BMP580 -- I\textsuperscript{2}C -- ESP32\\Thu thập, HAR, PDR, định danh};
+\node[block,text width=6.3cm,minimum height=20mm,right=12mm of w] (h) {\textbf{Nút trên mũ}\\ESP32, MQ-9, MQ-135\\Ghép dữ liệu theo người sử dụng};
+\draw[arr] (w) -- node[above,smallnote]{BLE} (h);
+\node[block,text width=12.8cm,minimum height=22mm,below=18mm of $(w.south)!.5!(h.south)$] (g) {\textbf{Gateway tại trạm chỉ huy}\\Bộ thu RF 433 MHz -- Raspberry Pi 3 Model B -- modem 4G USB\\Kiểm tra gói, chống trùng, lưu đệm và chuyển tiếp};
+\draw[arr] (h.south) -- ++(0,-.5) -| node[pos=.2,right,smallnote]{RF 433 MHz} (g.north east);
+\node[block,text width=12.8cm,minimum height=19mm,below=13mm of g] (s) {\textbf{Máy chủ}\\MQTT Broker, dịch vụ tiếp nhận và lưu trữ\\Phân phối theo chủ đề, lưu thời gian và chất lượng dữ liệu};
+\draw[arr] (g) -- node[right,smallnote]{4G/IP, MQTT trên TLS} (s);
+\node[block,text width=12.8cm,minimum height=18mm,below=13mm of s] (a) {\textbf{Website và ứng dụng Android}\\Hiển thị hành động, vị trí tương đối, tuổi dữ liệu và cảnh báo\\Phối hợp tích hợp với thành viên phụ trách phần mềm};
+\draw[arr] (s) -- node[right,smallnote]{Đăng ký chủ đề / API dịch vụ} (a);
+\end{tikzpicture}
