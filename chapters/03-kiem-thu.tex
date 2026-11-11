@@ -120,6 +120,19 @@ NET07&Nhiều nút mạng gửi đồng thời&Đo đạc hiện tượng tranh 
 
 Trạng thái tự phục hồi kết nối phải được đánh giá đồng thời trên cả phần mềm Gateway và ứng dụng giám sát. Việc biểu tượng kết nối chuyển sang màu xanh không thể thay thế cho việc đối chiếu dữ liệu đến đủ, không trùng lặp và đúng thứ tự thời gian. Tương tự, một lần xuất bản MQTT thành công chưa đủ để chứng minh toàn bộ nguồn cấp, mô-đun SIM và dịch vụ mạng hoạt động ổn định trong thời gian dài.
 
+
+\subsection{Ghi nhận dữ liệu MQTT bằng công cụ MQTTX}\label{subsec:mqttx-minhchung}
+Để kiểm tra khả năng tiếp nhận bản tin ở tầng ứng dụng, công cụ MQTTX được sử dụng đăng ký chủ đề \nolinkurl{ssalab/firefighter1} trên MQTT Broker. Hình~\ref{fig:mqttx-minhchung} là ảnh chụp phiên làm việc cho thấy MQTTX đã nhận một bản tin có cấu trúc JSON. Các trường quan sát được gồm \texttt{rawAct}, \texttt{hmmAct}, \texttt{stepCount}, \texttt{stepDistance}, \texttt{directionValue}, \texttt{directionHeading}, cùng các tập mẫu \texttt{positionSamples} và \texttt{inertialSamples}. Nhóm mẫu quán tính bao gồm dữ liệu gia tốc và vận tốc góc theo ba trục; các trường vị trí phục vụ kiểm tra đầu ra của thuật toán PDR.
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{assets/mqttx-nhan-du-lieu.png}{\includegraphics[width=\linewidth,height=.58\textheight,keepaspectratio]{assets/mqttx-nhan-du-lieu.png}}{\fbox{\parbox{.82\linewidth}{Ảnh MQTTX tiếp nhận bản tin JSON được cung cấp trong gói tư liệu bổ sung.}}}
+  \caption{Ảnh chụp MQTTX nhận bản tin JSON trên chủ đề giám sát thiết bị}
+  \label{fig:mqttx-minhchung}
+\end{figure}
+
+Tại thời điểm chụp, bản tin hiển thị \texttt{stepCount} bằng 313 và \texttt{stepDistance} bằng 202,8, minh họa việc đồng thời truyền trạng thái vận động, dữ liệu bước chân và các chuỗi mẫu cảm biến trong một thông điệp. Ảnh chụp chỉ xác nhận dữ liệu xuất hiện tại phía MQTT client trong phiên kiểm tra; chưa đủ để định lượng tỷ lệ mất gói, độ trễ đầu cuối hoặc xác minh riêng chặng RF 433 MHz và 4G. Các chỉ tiêu này vẫn cần được đánh giá bằng kịch bản đo kiểm độc lập đã nêu ở trên.
+
 \section{Kiểm tra đáp ứng dữ liệu khí độc và áp suất khí quyển}
 Các cảm biến khí MQ-9 và MQ-135 có đặc tính vật lý phụ thuộc rất lớn vào loại khí, điều kiện môi trường làm việc và quy trình hiệu chuẩn thực tế. Cảm biến MQ-135 là linh kiện bán dẫn nhạy cảm với nhiều nhóm khí khác nhau và khói tổng hợp; do đó dữ liệu của nó không thể tự tương đương với một chỉ số chất lượng không khí chuẩn (AQI) hay một phép đo khí CO\textsubscript{2} chọn lọc~\cite{mq135}. Tài liệu kỹ thuật của từng phiên bản MQ-9/MQ-9B phải được đối chiếu cẩn thận khi thiết kế mạch gia nhiệt và xây dựng phương pháp khai thác tín hiệu~\cite{mq9}.
 
