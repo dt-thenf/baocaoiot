@@ -1,0 +1,81 @@
+name: Build LaTeX report
+
+on:
+  push:
+    branches:
+      - main
+      - report/schematic-pcb-mqtt-20261111
+    paths:
+      - '**/*.tex'
+      - '**/*.sty'
+      - 'assets/**'
+      - 'figures/**'
+      - 'forms/**'
+      - '.github/workflows/build-report.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout report
+        uses: actions/checkout@v4
+
+      - name: Install XeLaTeX packages
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            texlive-xetex texlive-latex-extra texlive-fonts-recommended texlive-pictures fonts-croscore poppler-utils
+
+      - name: Prepare temporary Times-compatible fallback for CI only
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f fonts/times.ttf ]; then
+            mkdir -p fonts
+            cp /usr/share/fonts/truetype/croscore/Tinos-Regular.ttf fonts/times.ttf
+            cp /usr/share/fonts/truetype/croscore/Tinos-Bold.ttf fonts/timesbd.ttf
+            cp /usr/share/fonts/truetype/croscore/Tinos-Italic.ttf fonts/timesi.ttf
+            cp /usr/share/fonts/truetype/croscore/Tinos-BoldItalic.ttf fonts/timesbi.ttf
+          fi
+          echo "Font fallback is used only for the generated PDF; these font files are not committed."
+
+      - name: Build all report chapters with XeLaTeX
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2 3; do
+            echo "::group::XeLaTeX pass $pass"
+            xelatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+            echo "::endgroup::"
+          done
+          test -s main.pdf
+          pdfinfo main.pdf | grep -E '^Pages:|^Page size:'
+          echo "PDF compiled successfully."
+
+      - name: Upload completed PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: baocaoiot-complete-pdf
+          path: main.pdf
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Update compiled main.pdf on main branch
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add main.pdf
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: refresh compiled report PDF [skip ci]"
+            git push origin HEAD:main
+          else
+            echo "main.pdf is already up to date."
+          fi
