@@ -5,6 +5,18 @@ Hình~\ref{fig:kientruc} trình bày kiến trúc tổng thể được chuẩn 
 
 \Diagram{kien-truc}{Kiến trúc tổng thể của hệ thống với trạm chuyển tiếp Gateway Raspberry Pi 3B kết hợp mô-đun SIM 4G}{fig:kientruc}
 
+Hình~\ref{fig:iot-tham-chieu} trình bày mô hình tham chiếu IoT bốn lớp theo khuyến nghị ITU-T Y.4000/Y.2060~\cite{itu}. Mô hình được dùng để đối chiếu chức năng của các khối trong kiến trúc đề tài, không thay thế sơ đồ kết nối thực tế ở Hình~\ref{fig:kientruc}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.78\linewidth,height=.36\textheight,keepaspectratio]{assets/iot-architecture.png}
+\caption{Mô hình tham chiếu IoT gồm bốn lớp chức năng cùng các năng lực quản lý và bảo mật xuyên suốt}
+\label{fig:iot-tham-chieu}
+\end{figure}
+
+Trong cách đối chiếu này, \textit{lớp thiết bị} bao gồm cảm biến, nút ESP32 và Gateway; \textit{lớp mạng} bao gồm các chặng BLE, RF 433\,MHz và kết nối IP/4G; \textit{lớp hỗ trợ dịch vụ và ứng dụng} đảm nhận tiếp nhận, chuyển đổi, lưu đệm và phân phối bản tin qua MQTT Broker. \textit{Lớp ứng dụng} thể hiện mục tiêu khai thác thông tin trạng thái và cảnh báo phục vụ công tác chỉ huy, không đồng nghĩa với việc đã hoàn thành một ứng dụng phần mềm cụ thể. Hai nhóm năng lực quản lý và bảo mật áp dụng xuyên suốt cả bốn lớp, tương ứng với việc định danh thiết bị, giám sát liên kết, kiểm soát truy cập và bảo vệ dữ liệu.
+
+
 Trong kiến trúc này, nút gắn trên mũ đóng vai trò là trạm tập trung dữ liệu trên cơ thể người lính. Cụm đeo thắt lưng và nút trên mũ được ghép nối theo cùng một mã định danh cá nhân. Tuy nhiên, dữ liệu chuyển động và dữ liệu môi trường vẫn giữ mã nguồn riêng biệt để hệ thống dễ dàng phát hiện trường hợp một trong hai mô-đun bị mất kết nối. Giao thức MQTT chỉ được triển khai trên chặng truyền dẫn có kết nối mạng IP từ trạm Gateway lên máy chủ. Vi điều khiển ESP32 chỉ truyền các khung dữ liệu ứng dụng dạng nhị phân qua BLE và sóng RF, hoàn toàn không đóng gói trực tiếp bản tin MQTT trên kênh vô tuyến 433 MHz.
 
 Khi bắt đầu ca tác nghiệp, hệ thống tiến hành kiểm tra trạng thái cảm biến, khởi tạo tọa độ điểm xuất phát và thiết lập góc hướng chuẩn theo mặt bằng công trình. Trong suốt quá trình vận hành, các tiến trình đọc cảm biến, nhận dạng hoạt động, định vị quán tính và truyền thông được lập lịch thực thi độc lập. Khi một chặng kết nối bị gián đoạn, các phân hệ còn lại vẫn tiếp tục ghi nhận trạng thái và lưu dấu thời gian của bản tin hợp lệ cuối cùng. Giao diện giám sát trung tâm sẽ hiển thị rõ cảnh báo trễ dữ liệu này thay vì giữ nguyên giá trị cũ như thể hệ thống vẫn đang cập nhật bình thường.
@@ -148,6 +160,18 @@ N=f_sT=150\ \text{mẫu trên mỗi trục tọa độ}.
 Mô hình phân loại sử dụng thuật toán Rừng ngẫu nhiên (Random Forest) gồm 17 cây quyết định, giới hạn độ sâu tối đa 14 tầng với véc-tơ đầu vào gồm 13 đặc trưng thống kê. Toàn bộ dung lượng bộ nhớ Flash, mức chiếm dụng RAM và thời gian suy luận của mô hình đều được đặt trong mối tương quan đánh giá chung khi chạy đa nhiệm cùng tiến trình lấy mẫu và truyền thông trên vi điều khiển ESP32 (Hình~\ref{fig:har}).
 
 \Diagram{har}{Sơ đồ phân tách giai đoạn huấn luyện mô hình ngoại tuyến và giai đoạn suy luận thời gian thực trên ESP32}{fig:har}
+
+Hình~\ref{fig:har-quy-trinh-minh-hoa} minh họa chuỗi công việc từ thu thập dữ liệu 11 trạng thái hoạt động của lính cứu hỏa, theo dõi biến thiên tín hiệu trong cửa sổ thời gian đến trích chọn đặc trưng và suy luận trên vi điều khiển. Đây là hình diễn giải nguyên lý xử lý; hình không thay thế số liệu đánh giá độ chính xác hoặc độ trễ của mô hình.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth,height=.46\textheight,keepaspectratio]{assets/har-abnormal-detection.png}
+\caption{Minh họa quy trình thu thập hoạt động, nhận biết cửa sổ tín hiệu bất thường và nhận dạng hành động tại biên}
+\label{fig:har-quy-trinh-minh-hoa}
+\end{figure}
+
+Cụ thể, tín hiệu gia tốc ba trục từ các hoạt động được phân đoạn thành cửa sổ quan sát trước khi tính 13 đặc trưng miền thời gian như cấu hình mô hình đã nêu. Nhánh quan sát \textit{chỉ số bất thường} trong hình nhằm làm nổi bật các biến động mạnh, chẳng hạn cửa sổ chứa sự kiện ngã, để ưu tiên xem xét riêng; chỉ số này không được đồng nhất với xác suất nhận dạng lớp \emph{ngã} của Random Forest. Sau khi suy luận, kết quả trạng thái được đóng gói để chuyển tiếp theo tuyến BLE--RF--Gateway đã mô tả, không phát MQTT trực tiếp từ ESP32 trên chặng RF. Việc xác nhận ngã và đánh giá cảnh báo giả vẫn phải được kiểm thử độc lập.
+
 
 Trong quá trình vận hành, cần phân biệt rõ chu kỳ lấy mẫu cảm biến (20 ms tương ứng với tần số 50 Hz) và chu kỳ xuất kết quả nhận dạng của mô hình. Nếu sử dụng các cửa sổ trượt không chồng lấp, kết quả phân loại mới chỉ được cập nhật sau mỗi 3 giây. Gọi $H$ là bước dịch cửa sổ (tính theo số mẫu), chu kỳ cập nhật kết quả sẽ là $H/f_s$. Hệ thống có thể áp dụng phương án chồng lấp 50\% ($H=75$ mẫu) để rút ngắn chu kỳ cập nhật xuống còn 1,5 giây; tuy nhiên cấu hình này cần được đo kiểm thực tế về mức tải CPU và tiêu thụ năng lượng trước khi áp dụng cố định vào mã nguồn.
 
